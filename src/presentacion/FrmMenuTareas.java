@@ -4,7 +4,15 @@
  * and open the template in the editor.
  */
 
-package Presentacion;
+package presentacion;
+
+import DAOS.TareaDAO;
+import Objeto_negocio.Estado;
+import Objeto_negocio.Tarea;
+import java.util.ArrayList;
+import javax.swing.DropMode;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -13,10 +21,21 @@ package Presentacion;
 public class FrmMenuTareas extends javax.swing.JFrame {
 
     /** Creates new form FrmMenuTareas */
+    
+    private TareaDAO tareaDao;
+    private ArrayList<Tarea> tareasPendientes;
+    private ArrayList<Tarea> tareasEnProgreso;
+    private ArrayList<Tarea> tareasTerminadas;
     public FrmMenuTareas() {
         initComponents();
+        this.tareaDao=new TareaDAO();
+        this.cargarTareasPendientes();
+        this.cargarTareasEnProgreso();
+        this.cargarTareasTerminadas();
+        
     }
 
+    String [] botones={"Si","No"};
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -51,9 +70,14 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 "Nombre", "Descripción"
             }
         ));
+        tbPendiente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbPendienteMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbPendiente);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 190, 310));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 190, 300));
 
         tbEnProgreso.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -63,9 +87,19 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 "Nombre", "Descripción"
             }
         ));
+        tbEnProgreso.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                tbEnProgresoMouseDragged(evt);
+            }
+        });
+        tbEnProgreso.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbEnProgresoMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(tbEnProgreso);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 190, 310));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 190, 300));
 
         tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -77,7 +111,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tbTerminado);
 
-        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 190, 310));
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 190, 300));
 
         btnReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnReanudar.setText("Reanudar");
@@ -85,7 +119,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
         Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         Salir.setText("Salir");
-        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 350, 130, 30));
+        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 340, 130, 30));
 
         btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
@@ -97,6 +131,11 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
         btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar tarea");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 70, 130, 30));
 
         lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
@@ -109,6 +148,95 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+     FrmAgregarTareas agregar=new FrmAgregarTareas();
+     agregar.jFrameMenu(this);
+     agregar.setVisible(true);
+    }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void tbPendienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbPendienteMouseClicked
+       try{
+           int indiceFelaSeleccionada = this.tbPendiente.getSelectedRow(); 
+           Tarea tarea= this.tareasPendientes.get(indiceFelaSeleccionada);
+           tarea.setEstado(Estado.EN_PROGRESO);
+           tareaDao.actualizar(tarea);
+           this.cargarTareasPendientes();
+           this.cargarTareasEnProgreso();
+        }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+    }//GEN-LAST:event_tbPendienteMouseClicked
+
+    private void tbEnProgresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnProgresoMouseClicked
+        try{
+           int opcion = JOptionPane.showOptionDialog(this, "Desea finalizar la tarea?", "Finalizar tarea", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
+           
+           if(opcion==0){
+               int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
+               Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
+               tarea.setEstado(Estado.TERMINADA);
+               tareaDao.actualizar(tarea);
+               this.cargarTareasEnProgreso();
+               this.cargarTareasTerminadas();
+               JOptionPane.showMessageDialog(null, "Tarea finalizada con exito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
+          }
+        }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+    }//GEN-LAST:event_tbEnProgresoMouseClicked
+
+    private void tbEnProgresoMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnProgresoMouseDragged
+        tbEnProgreso.setDragEnabled(true);
+    }//GEN-LAST:event_tbEnProgresoMouseDragged
+
+    
+    public void cargarTareasPendientes(){
+        try{
+        this.tareasPendientes=this.tareaDao.consultarEstado(Estado.PENDIENTE);
+        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbPendiente.getModel();
+        modeloTabla.setRowCount(0);
+        for (Tarea tarea : tareasPendientes) {
+            Object[] filaDatos=new Object[2];
+            filaDatos[0]=tarea.getNombre();
+            filaDatos[1]=tarea.getDescripcion();
+            modeloTabla.addRow(filaDatos);
+        }
+        }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+    }
+    
+    private void cargarTareasEnProgreso(){
+        try{
+        this.tareasEnProgreso=this.tareaDao.consultarEstado(Estado.EN_PROGRESO);
+        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbEnProgreso.getModel();
+        modeloTabla.setRowCount(0);
+        for (Tarea tarea : tareasEnProgreso) {
+            Object[] filaDatos=new Object[2];
+            filaDatos[0]=tarea.getNombre();
+            filaDatos[1]=tarea.getDescripcion();
+            modeloTabla.addRow(filaDatos);
+        }
+        }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+    }
+    
+    private void cargarTareasTerminadas(){
+        try{    
+        this.tareasTerminadas=this.tareaDao.consultarEstado(Estado.TERMINADA);
+        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbTerminado.getModel();
+        modeloTabla.setRowCount(0);
+        for (Tarea tarea : tareasTerminadas) {
+            Object[] filaDatos=new Object[2];
+            filaDatos[0]=tarea.getNombre();
+            filaDatos[1]=tarea.getDescripcion();
+            modeloTabla.addRow(filaDatos);
+        }
+        }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -134,6 +262,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrmMenuTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
