@@ -9,15 +9,13 @@ package presentacion;
 import DAOS.TareaDAO;
 import Objeto_negocio.Estado;
 import Objeto_negocio.Tarea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.DropMode;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author lossa
- */
 public class FrmMenuTareas extends javax.swing.JFrame {
 
     /** Creates new form FrmMenuTareas */
@@ -26,16 +24,73 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private ArrayList<Tarea> tareasPendientes;
     private ArrayList<Tarea> tareasEnProgreso;
     private ArrayList<Tarea> tareasTerminadas;
+    private int minutos;
+    private int segundos;
+    private boolean descanso;
+    private boolean mensaje;
+    private int numDescansos;
+    private Timer timer;
+    
     public FrmMenuTareas() {
         initComponents();
+        setLocationRelativeTo(null);
         this.tareaDao=new TareaDAO();
         this.cargarTareasPendientes();
         this.cargarTareasEnProgreso();
         this.cargarTareasTerminadas();
-        
+        this.timer= new Timer(1, acciones);
+        this.minutos=0;
+        this.segundos=0;
+        this.descanso=false;
+        this.mensaje=false;
+        this.numDescansos=0;
+        if(this.tareasEnProgreso.isEmpty()) btnIniciarReanudar.setEnabled(false);
+        btnPausar.setEnabled(false);
+        btnCancelar.setEnabled(false);
     }
 
-    String [] botones={"Si","No"};
+    String [] botones={"Sí","No"};
+    private ActionListener acciones = new ActionListener(){
+
+        @Override
+        public void actionPerformed(ActionEvent ae) {
+            if(segundos != 0 || minutos != 0) {
+                if(segundos==1 && minutos==0 && !descanso){
+                    numDescansos++;
+                    System.out.println(numDescansos);
+                    if(numDescansos==4) numDescansos=0;
+                    segundos--;
+                } else if(segundos!=0){
+                    segundos--;
+                    
+                } else if(minutos!=0){
+                    minutos--;
+                    segundos=59;
+                }
+                actualizarTemporizador();
+                if(segundos==5 && minutos==0){
+                    if(descanso){
+                        JOptionPane.showMessageDialog(null, "El tiempo de descanso está por terminar", "Tiempo de descanso finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
+                        descanso=false;
+                    }else{
+                        JOptionPane.showMessageDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
+                        descanso=true;
+                    }
+                    mensaje= true;
+                }
+            }
+            else if(mensaje){
+                establecerTiempo();
+            }
+        }
+        
+    };
+    
+    private void actualizarTemporizador() {
+        String tiempo = (minutos<=9?"0":"")+minutos+":"+(segundos<=9?"0":"")+segundos;
+        lblTemporizador.setText(tiempo);
+        lblTemporizador.repaint();
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -51,7 +106,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         tbEnProgreso = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbTerminado = new javax.swing.JTable();
-        btnReanudar = new javax.swing.JButton();
+        btnIniciarReanudar = new javax.swing.JButton();
         Salir = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         btnPausar = new javax.swing.JButton();
@@ -113,21 +168,41 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
         getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 190, 300));
 
-        btnReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnReanudar.setText("Reanudar");
-        getContentPane().add(btnReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 210, 130, 30));
+        btnIniciarReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnIniciarReanudar.setText("Iniciar");
+        btnIniciarReanudar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarReanudarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 170, 130, 30));
 
         Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
         getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 340, 130, 30));
 
         btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
         getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 250, 130, 30));
 
         btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnPausar.setText("Pausar");
-        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 170, 130, 30));
+        btnPausar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPausarActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 210, 130, 30));
 
         btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar tarea");
@@ -163,13 +238,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
            this.cargarTareasPendientes();
            this.cargarTareasEnProgreso();
         }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
     }//GEN-LAST:event_tbPendienteMouseClicked
 
     private void tbEnProgresoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnProgresoMouseClicked
         try{
-           int opcion = JOptionPane.showOptionDialog(this, "Desea finalizar la tarea?", "Finalizar tarea", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
+           int opcion = JOptionPane.showOptionDialog(this, "¿Desea finalizar la tarea?", "Finalizar tarea", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
            
            if(opcion==0){
                int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
@@ -178,16 +253,51 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                tareaDao.actualizar(tarea);
                this.cargarTareasEnProgreso();
                this.cargarTareasTerminadas();
-               JOptionPane.showMessageDialog(null, "Tarea finalizada con exito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
+               JOptionPane.showMessageDialog(null, "Tarea finalizada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
           }
         }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
     }//GEN-LAST:event_tbEnProgresoMouseClicked
 
     private void tbEnProgresoMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnProgresoMouseDragged
         tbEnProgreso.setDragEnabled(true);
     }//GEN-LAST:event_tbEnProgresoMouseDragged
+
+    private void btnIniciarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarReanudarActionPerformed
+        empezarTemporizador();
+        btnIniciarReanudar.setEnabled(false);
+        btnIniciarReanudar.setText("Reanudar");
+        btnPausar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_btnIniciarReanudarActionPerformed
+
+    private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
+        timer.stop();
+        btnIniciarReanudar.setEnabled(true);
+        btnPausar.setEnabled(false);
+    }//GEN-LAST:event_btnPausarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        if(timer.isRunning()) 
+        {
+            timer.stop();
+            btnIniciarReanudar.setEnabled(true);
+        }
+        btnIniciarReanudar.setText("Iniciar");
+        btnPausar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        minutos=0; segundos=0;
+        actualizarTemporizador();
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
+        if(timer.isRunning()) 
+        {
+            timer.stop();
+        }
+        this.dispose();
+    }//GEN-LAST:event_SalirActionPerformed
 
     
     public void cargarTareasPendientes(){
@@ -202,7 +312,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
             modeloTabla.addRow(filaDatos);
         }
         }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
     }
     
@@ -217,8 +327,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
             filaDatos[1]=tarea.getDescripcion();
             modeloTabla.addRow(filaDatos);
         }
+        if(!tareasEnProgreso.isEmpty()){
+            habilitarBotonIniciar();
+        }else{
+            deshabilitarBotonIniciar();
+        }
         }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
     }
     
@@ -234,51 +349,56 @@ public class FrmMenuTareas extends javax.swing.JFrame {
             modeloTabla.addRow(filaDatos);
         }
         }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
     }
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmMenuTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmMenuTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmMenuTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmMenuTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    
+    public boolean comprobarVacioTablaEnProgreso(){
+        if(tareasEnProgreso.isEmpty()){
+            return true;
         }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmMenuTareas().setVisible(true);
+        return false;
+    }
+    
+    public void habilitarBotonIniciar(){
+        btnIniciarReanudar.setEnabled(true);
+    }
+    
+    public void deshabilitarBotonIniciar(){
+        minutos=0;
+        segundos=0;
+        btnIniciarReanudar.setEnabled(false);
+    }
+    
+    private void empezarTemporizador(){
+        if(minutos==0 && segundos==0){
+            establecerTiempo();
+        }
+        timer.start();
+    }
+    
+    private void establecerTiempo(){
+        if(descanso){
+            switch(numDescansos){
+                case 3: 
+                    minutos=10;
+                    break;
+                default: 
+                    minutos= 3;
+                    break;
             }
-        });
+        }else{
+            minutos=5;
+        }
+        actualizarTemporizador();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Salir;
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnIniciarReanudar;
     private javax.swing.JButton btnPausar;
-    private javax.swing.JButton btnReanudar;
     private javax.swing.JLabel fondo;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

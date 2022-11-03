@@ -12,10 +12,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author USER
- */
 public class FrmAgregarTareas extends javax.swing.JFrame {
 
     /**
@@ -23,6 +19,7 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
      */
     public FrmAgregarTareas() {
         initComponents();
+        setLocationRelativeTo(null);
         this.lblCaracteres.setText("100"); 
     }
 
@@ -45,6 +42,7 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
         txtDescripcion = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         lblCaracteres = new javax.swing.JLabel();
+        btnCancelar = new javax.swing.JButton();
         btnAgregar = new javax.swing.JButton();
         imagen = new javax.swing.JLabel();
 
@@ -58,12 +56,12 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
         jPanel1.add(lblDatosTarea, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 60, -1, 20));
 
         lblTitulo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblTitulo.setText("Descripcion");
+        lblTitulo.setText("Descripción");
         jPanel1.add(lblTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 140, -1, -1));
         jPanel1.add(txtTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 310, -1));
 
         lblDescripcion.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lblDescripcion.setText("Titulo");
+        lblDescripcion.setText("Título");
         jPanel1.add(lblDescripcion, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, -1, -1));
 
         txtDescripcion.setColumns(20);
@@ -87,13 +85,23 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
         });
         jPanel1.add(lblCaracteres, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 310, 30, 20));
 
+        btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 350, 100, 30));
+
+        btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 350, -1, -1));
+        jPanel1.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 350, 100, 30));
 
         imagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/MenuTareas.png"))); // NOI18N
         imagen.setText("jLabel1");
@@ -118,24 +126,25 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
             Tarea tarea=new Tarea(txtTitulo.getText().toLowerCase(),txtDescripcion.getText().toLowerCase(),Estado.PENDIENTE);
             TareaDAO tareaDao = new TareaDAO();
             if(tareaDao.repetidoTitulo(txtTitulo.getText().toLowerCase())){
-                JOptionPane.showMessageDialog(null, "Titulo repetido, porfavor coloque otro");
+                JOptionPane.showMessageDialog(null, "Título repetido, por favor coloque otro");
             }else if(tareaDao.repetidoDescripcion(txtDescripcion.getText().toLowerCase())){
-                JOptionPane.showMessageDialog(null, "Descripcion repetida, porfavor coloque otra");
+                JOptionPane.showMessageDialog(null, "Descripción repetida, porf avor coloque otra");
             }else{
                 try {
                     tareaDao.insertar(tarea);
                     System.out.println("aqui aun no se bloquea");
+                    if(frmMenu.comprobarVacioTablaEnProgreso()==true) frmMenu.habilitarBotonIniciar();
                     frmMenu.cargarTareasPendientes();
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(null, "Error "+ex.getMessage());
                     Logger.getLogger(FrmAgregarTareas.class.getName()).log(Level.SEVERE, null, ex);
                 }
                if(tareaDao.señal){
-               JOptionPane.showMessageDialog(null, "Tarea guardada con exito");
+               JOptionPane.showMessageDialog(null, "Tarea guardada con éxito");
                }
             }
         }else{
-            JOptionPane.showMessageDialog(null, "Porfavor coloque el titulo y la descripcion");
+            JOptionPane.showMessageDialog(null, "Por favor coloque el título y la descripcion");
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
@@ -156,46 +165,16 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDescripcionCaretUpdate
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmAgregarTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmAgregarTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmAgregarTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmAgregarTareas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnCancelarActionPerformed
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrmAgregarTareas().setVisible(true);                
-            }
-        });
-    }
 
     //this.lblCaracteres.setText(String.valueOf(txtDescripcion.getText().length()));
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnCancelar;
     private javax.swing.JLabel imagen;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
