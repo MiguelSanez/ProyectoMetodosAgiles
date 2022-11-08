@@ -274,6 +274,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
     private void btnPausarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarActionPerformed
         timer.stop();
+        JOptionPane.showMessageDialog(null, "El temporizador está en pausa", "El temporizador está en pausa", JOptionPane.INFORMATION_MESSAGE);
         btnIniciarReanudar.setEnabled(true);
         btnPausar.setEnabled(false);
     }//GEN-LAST:event_btnPausarActionPerformed
@@ -330,7 +331,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         if(!tareasEnProgreso.isEmpty()){
             habilitarBotonIniciar();
         }else{
-            deshabilitarBotonIniciar();
+            deshabilitarBotones();
         }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
@@ -364,10 +365,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnIniciarReanudar.setEnabled(true);
     }
     
-    public void deshabilitarBotonIniciar(){
+    public void deshabilitarBotones(){
+        if(timer.isRunning())timer.stop();
         minutos=0;
         segundos=0;
         btnIniciarReanudar.setEnabled(false);
+        btnPausar.setEnabled(false);
+        btnCancelar.setEnabled(false);
     }
     
     private void empezarTemporizador(){
