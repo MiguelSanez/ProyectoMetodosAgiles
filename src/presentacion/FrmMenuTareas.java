@@ -34,31 +34,43 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     public FrmMenuTareas() {
         initComponents();
         setLocationRelativeTo(null);
-        this.tareaDao=new TareaDAO();
-        this.cargarTareasPendientes();
-        this.cargarTareasEnProgreso();
-        this.cargarTareasTerminadas();
         this.timer= new Timer(1, acciones);
+        this.tareaDao=new TareaDAO();
         this.minutos=0;
         this.segundos=0;
         this.descanso=false;
         this.mensaje=false;
         this.numDescansos=0;
+        this.cargarTareasPendientes();
+        this.cargarTareasEnProgreso();
+        this.cargarTareasTerminadas();
         if(this.tareasEnProgreso.isEmpty()) btnIniciarReanudar.setEnabled(false);
         btnPausar.setEnabled(false);
         btnCancelar.setEnabled(false);
     }
-
-    String [] botones={"Sí","No"};
+    private int opciones;
+    private int auxOpcion=-1;
+    private String [] botones={"Sí","No"};
+    private String [] botones2={"Confirmar","Omitir"};
     private ActionListener acciones = new ActionListener(){
 
         @Override
         public void actionPerformed(ActionEvent ae) {
             if(segundos != 0 || minutos != 0) {
                 if(segundos==1 && minutos==0 && !descanso){
+                    if(auxOpcion==0){
+                        descanso=true;
+                    } else if(auxOpcion==1){
+                        numDescansos++;
+                        System.out.println(numDescansos);
+                        if(numDescansos==4) numDescansos=0;
+                    }
+                    segundos--;
+                } else if(segundos==1 && minutos==0 && descanso){
                     numDescansos++;
                     System.out.println(numDescansos);
                     if(numDescansos==4) numDescansos=0;
+                    descanso=false;
                     segundos--;
                 } else if(segundos!=0){
                     segundos--;
@@ -71,10 +83,9 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 if(segundos==5 && minutos==0){
                     if(descanso){
                         JOptionPane.showMessageDialog(null, "El tiempo de descanso está por terminar", "Tiempo de descanso finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
-                        descanso=false;
                     }else{
-                        JOptionPane.showMessageDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
-                        descanso=true;
+                        opciones= JOptionPane.showOptionDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones2,botones2[0]);
+                        auxOpcion= opciones;
                     }
                     mensaje= true;
                 }
@@ -90,6 +101,12 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         String tiempo = (minutos<=9?"0":"")+minutos+":"+(segundos<=9?"0":"")+segundos;
         lblTemporizador.setText(tiempo);
         lblTemporizador.repaint();
+        if(numDescansos!=0){
+            lblNumDescansos.setText((numDescansos)+"");
+        }else{
+            lblNumDescansos.setText(numDescansos+"");
+        }
+        lblNumDescansos.repaint();
     }
     /** This method is called from within the constructor to
      * initialize the form.
@@ -111,6 +128,8 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnCancelar = new javax.swing.JButton();
         btnPausar = new javax.swing.JButton();
         btnAgregar = new javax.swing.JButton();
+        lblInformacionDescansos = new javax.swing.JLabel();
+        lblNumDescansos = new javax.swing.JLabel();
         lblTemporizador = new javax.swing.JLabel();
         fondo = new javax.swing.JLabel();
 
@@ -175,7 +194,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnIniciarReanudarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 170, 130, 30));
+        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 230, 130, 30));
 
         Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         Salir.setText("Salir");
@@ -184,7 +203,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 SalirActionPerformed(evt);
             }
         });
-        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 340, 130, 30));
+        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 350, 130, 30));
 
         btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
@@ -193,7 +212,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 250, 130, 30));
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 310, 130, 30));
 
         btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnPausar.setText("Pausar");
@@ -202,7 +221,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnPausarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 210, 130, 30));
+        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 270, 130, 30));
 
         btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar tarea");
@@ -211,11 +230,20 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 70, 130, 30));
+        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, 130, 30));
+
+        lblInformacionDescansos.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblInformacionDescansos.setText("Número de descansos");
+        getContentPane().add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 60, -1, -1));
+
+        lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
+        lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNumDescansos.setText("0");
+        getContentPane().add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, 30, -1));
 
         lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         lblTemporizador.setText("00:00");
-        getContentPane().add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 110, -1, -1));
+        getContentPane().add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 160, -1, -1));
 
         fondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/MenuTareas.png"))); // NOI18N
         getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -246,15 +274,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         try{
            int opcion = JOptionPane.showOptionDialog(this, "¿Desea finalizar la tarea?", "Finalizar tarea", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
            
-           if(opcion==0){
-               int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
-               Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
-               tarea.setEstado(Estado.TERMINADA);
-               tareaDao.actualizar(tarea);
-               this.cargarTareasEnProgreso();
-               this.cargarTareasTerminadas();
-               JOptionPane.showMessageDialog(null, "Tarea finalizada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
-          }
+            if(opcion==0){
+                int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
+                Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
+                tarea.setEstado(Estado.TERMINADA);
+                tareaDao.actualizar(tarea);
+                this.cargarTareasEnProgreso();
+                this.cargarTareasTerminadas();
+                JOptionPane.showMessageDialog(null, "Tarea finalizada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
+            }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
@@ -280,16 +308,21 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPausarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        if(timer.isRunning()) 
-        {
-            timer.stop();
-            btnIniciarReanudar.setEnabled(true);
-        }
-        btnIniciarReanudar.setText("Iniciar");
-        btnPausar.setEnabled(false);
-        btnCancelar.setEnabled(false);
-        minutos=0; segundos=0;
-        actualizarTemporizador();
+        int opcion = JOptionPane.showOptionDialog(this, "¿Desea restablecer el temporizador?", "Restablecer temporizador", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
+           
+        if(opcion==0){
+            if(timer.isRunning()) 
+            {
+                timer.stop();
+                btnIniciarReanudar.setEnabled(true);
+            }
+            btnIniciarReanudar.setText("Iniciar");
+            btnPausar.setEnabled(false);
+            btnCancelar.setEnabled(false);
+            minutos=0; segundos=0;
+            actualizarTemporizador();
+         }
+        
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
@@ -303,14 +336,14 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     
     public void cargarTareasPendientes(){
         try{
-        this.tareasPendientes=this.tareaDao.consultarEstado(Estado.PENDIENTE);
-        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbPendiente.getModel();
-        modeloTabla.setRowCount(0);
-        for (Tarea tarea : tareasPendientes) {
-            Object[] filaDatos=new Object[2];
-            filaDatos[0]=tarea.getNombre();
-            filaDatos[1]=tarea.getDescripcion();
-            modeloTabla.addRow(filaDatos);
+            this.tareasPendientes=this.tareaDao.consultarEstado(Estado.PENDIENTE);
+            DefaultTableModel modeloTabla=(DefaultTableModel)this.tbPendiente.getModel();
+            modeloTabla.setRowCount(0);
+            for (Tarea tarea : tareasPendientes) {
+                Object[] filaDatos=new Object[2];
+                filaDatos[0]=tarea.getNombre();
+                filaDatos[1]=tarea.getDescripcion();
+                modeloTabla.addRow(filaDatos);
         }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
@@ -319,20 +352,20 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     
     private void cargarTareasEnProgreso(){
         try{
-        this.tareasEnProgreso=this.tareaDao.consultarEstado(Estado.EN_PROGRESO);
-        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbEnProgreso.getModel();
-        modeloTabla.setRowCount(0);
-        for (Tarea tarea : tareasEnProgreso) {
-            Object[] filaDatos=new Object[2];
-            filaDatos[0]=tarea.getNombre();
-            filaDatos[1]=tarea.getDescripcion();
-            modeloTabla.addRow(filaDatos);
-        }
-        if(!tareasEnProgreso.isEmpty()){
-            habilitarBotonIniciar();
-        }else{
-            deshabilitarBotones();
-        }
+            this.tareasEnProgreso=this.tareaDao.consultarEstado(Estado.EN_PROGRESO);
+            DefaultTableModel modeloTabla=(DefaultTableModel)this.tbEnProgreso.getModel();
+            modeloTabla.setRowCount(0);
+            for (Tarea tarea : tareasEnProgreso) {
+                Object[] filaDatos=new Object[2];
+                filaDatos[0]=tarea.getNombre();
+                filaDatos[1]=tarea.getDescripcion();
+                modeloTabla.addRow(filaDatos);
+            }
+            if(!tareasEnProgreso.isEmpty()){
+                habilitarBotonIniciar();
+            }else{
+                restablecer();
+            }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
@@ -340,15 +373,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     
     private void cargarTareasTerminadas(){
         try{    
-        this.tareasTerminadas=this.tareaDao.consultarEstado(Estado.TERMINADA);
-        DefaultTableModel modeloTabla=(DefaultTableModel)this.tbTerminado.getModel();
-        modeloTabla.setRowCount(0);
-        for (Tarea tarea : tareasTerminadas) {
-            Object[] filaDatos=new Object[2];
-            filaDatos[0]=tarea.getNombre();
-            filaDatos[1]=tarea.getDescripcion();
-            modeloTabla.addRow(filaDatos);
-        }
+            this.tareasTerminadas=this.tareaDao.consultarEstado(Estado.TERMINADA);
+            DefaultTableModel modeloTabla=(DefaultTableModel)this.tbTerminado.getModel();
+            modeloTabla.setRowCount(0);
+            for (Tarea tarea : tareasTerminadas) {
+                Object[] filaDatos=new Object[2];
+                filaDatos[0]=tarea.getNombre();
+                filaDatos[1]=tarea.getDescripcion();
+                modeloTabla.addRow(filaDatos);
+            }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
@@ -365,10 +398,12 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnIniciarReanudar.setEnabled(true);
     }
     
-    public void deshabilitarBotones(){
+    public void restablecer(){
         if(timer.isRunning())timer.stop();
         minutos=0;
         segundos=0;
+        numDescansos=0;
+        descanso=false;
         btnIniciarReanudar.setEnabled(false);
         btnPausar.setEnabled(false);
         btnCancelar.setEnabled(false);
@@ -407,6 +442,8 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblInformacionDescansos;
+    private javax.swing.JLabel lblNumDescansos;
     private javax.swing.JLabel lblTemporizador;
     private javax.swing.JTable tbEnProgreso;
     private javax.swing.JTable tbPendiente;
