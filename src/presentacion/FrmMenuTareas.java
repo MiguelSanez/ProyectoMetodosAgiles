@@ -49,6 +49,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnCancelar.setEnabled(false);
     }
     private int opciones;
+    private int opciones2;
     private int auxOpcion=-1;
     private String [] botones={"Sí","No"};
     private String [] botones2={"Confirmar","Omitir"};
@@ -85,7 +86,16 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(null, "El tiempo de descanso está por terminar", "Tiempo de descanso finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
                     }else{
                         opciones= JOptionPane.showOptionDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones2,botones2[0]);
-                        auxOpcion= opciones;
+                        if(opciones==1){
+                            opciones2= JOptionPane.showOptionDialog(null, "¿Deseas omitir?", "Confirmación omición", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
+                            if(opciones2==0){
+                                auxOpcion=1;
+                            }else{
+                                auxOpcion=0;
+                            }
+                        }else{
+                            auxOpcion= opciones;
+                        }
                     }
                     mensaje= true;
                 }
@@ -101,11 +111,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         String tiempo = (minutos<=9?"0":"")+minutos+":"+(segundos<=9?"0":"")+segundos;
         lblTemporizador.setText(tiempo);
         lblTemporizador.repaint();
-        if(numDescansos!=0){
-            lblNumDescansos.setText((numDescansos)+"");
-        }else{
-            lblNumDescansos.setText(numDescansos+"");
-        }
+        lblNumDescansos.setText(numDescansos+"");
         lblNumDescansos.repaint();
     }
     /** This method is called from within the constructor to
