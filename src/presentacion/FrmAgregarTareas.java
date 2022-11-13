@@ -123,8 +123,9 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
         if(txtTitulo.getText().length()>0&&txtDescripcion.getText().length()>0){
-            Tarea tarea=new Tarea(txtTitulo.getText().toLowerCase(),txtDescripcion.getText().toLowerCase(),Estado.PENDIENTE);
+            Tarea tarea=new Tarea(txtTitulo.getText().toLowerCase().trim(),txtDescripcion.getText().toLowerCase().trim(),Estado.PENDIENTE);
             TareaDAO tareaDao = new TareaDAO();
+            tareaDao.llenarLista();
             if(tareaDao.repetidoTitulo(txtTitulo.getText().toLowerCase())){
                 JOptionPane.showMessageDialog(null, "Título repetido, por favor coloque otro");
             }else if(tareaDao.repetidoDescripcion(txtDescripcion.getText().toLowerCase())){

@@ -12,6 +12,11 @@ import Objeto_negocio.Tarea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
@@ -135,7 +140,9 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnPausar = new javax.swing.JButton();
         btnAgregar = new javax.swing.JButton();
         lblInformacionDescansos = new javax.swing.JLabel();
+        btnRegresarPendientes = new javax.swing.JButton();
         lblNumDescansos = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         lblTemporizador = new javax.swing.JLabel();
         fondo = new javax.swing.JLabel();
 
@@ -179,14 +186,14 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tbEnProgreso);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 190, 300));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 190, 270));
 
         tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nombre", "Descripción"
+                "Nombre", "Descripción", "Fecha", "Hora"
             }
         ));
         jScrollPane3.setViewportView(tbTerminado);
@@ -242,10 +249,21 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         lblInformacionDescansos.setText("Número de descansos");
         getContentPane().add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 60, -1, -1));
 
+        btnRegresarPendientes.setText("Regresar a tareas pendientes");
+        btnRegresarPendientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarPendientesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnRegresarPendientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 350, -1, -1));
+
         lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNumDescansos.setText("0");
         getContentPane().add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, 30, -1));
+
+        jLabel1.setText("En caso de no terminar seleccione la tarea, no confirme y seleccione el boton");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 370, 440, 30));
 
         lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         lblTemporizador.setText("00:00");
@@ -284,7 +302,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
                 Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
                 tarea.setEstado(Estado.TERMINADA);
-                tareaDao.actualizar(tarea);
+                tareaDao.actualizarParaFinalizar(tarea);
                 this.cargarTareasEnProgreso();
                 this.cargarTareasTerminadas();
                 JOptionPane.showMessageDialog(null, "Tarea finalizada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
@@ -339,6 +357,42 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_SalirActionPerformed
 
+    private void btnRegresarPendientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarPendientesActionPerformed
+           try {
+            int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
+             if(indiceFelaSeleccionada==-1){  
+           JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee regresar", "error", JOptionPane.INFORMATION_MESSAGE);
+           }
+            Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
+            tarea.setEstado(Estado.PENDIENTE);
+            tareaDao.actualizar(tarea);
+            this.cargarTareasEnProgreso();
+            this.cargarTareasPendientes();
+            JOptionPane.showMessageDialog(null, "Tarea regresada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception ex) {
+            Logger.getLogger(FrmMenuTareas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnRegresarPendientesActionPerformed
+
+    //para eliminar elementos si se requiere
+    private void eliminarTareaFinalizada(){
+       int indiceFelaSeleccionada = this.tbTerminado.getSelectedRow();
+       if(indiceFelaSeleccionada==-1){  
+           JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee eliminar", "error", JOptionPane.INFORMATION_MESSAGE);
+       }else{  
+          int OpcionSeleccionada=JOptionPane.showConfirmDialog(this, "Desea eliminar el elemento seleccionado","Confirmacion",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(OpcionSeleccionada==JOptionPane.YES_OPTION){
+           Integer idCliente=tareasTerminadas.get(indiceFelaSeleccionada).getId();
+           try{
+              this.tareaDao.eliminar(idCliente);
+           }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudo lograr la actualizacion de la tarea seleccionado", "Error", JOptionPane.ERROR_MESSAGE); 
+           }
+           this.cargarTareasTerminadas();
+           JOptionPane.showMessageDialog(this, "Se elimino la tarea", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE); 
+        }
+      }  
+    }
     
     public void cargarTareasPendientes(){
         try{
@@ -379,18 +433,30 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     
     private void cargarTareasTerminadas(){
         try{    
-            this.tareasTerminadas=this.tareaDao.consultarEstado(Estado.TERMINADA);
+            this.tareasTerminadas=this.tareaDao.consultarEstadoTerminado(Estado.TERMINADA);
             DefaultTableModel modeloTabla=(DefaultTableModel)this.tbTerminado.getModel();
             modeloTabla.setRowCount(0);
             for (Tarea tarea : tareasTerminadas) {
-                Object[] filaDatos=new Object[2];
+                Object[] filaDatos=new Object[4];
                 filaDatos[0]=tarea.getNombre();
                 filaDatos[1]=tarea.getDescripcion();
+                filaDatos[2]=fechaOrdenada(tarea.getFecha());
+                filaDatos[3]=tarea.getHora();
                 modeloTabla.addRow(filaDatos);
             }
         }catch(Exception ex){
               JOptionPane.showMessageDialog(this, "No se pudieron obtener los datos de la tabla"+" "+ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
         }
+    }
+    
+    private String fechaOrdenada(Date date){
+        Calendar calendario=new GregorianCalendar();
+        calendario.setTime(date);
+        String dia,mes,annio;
+        dia=Integer.toString(calendario.get(Calendar.DATE));
+        mes=Integer.toString(calendario.get(Calendar.MONTH)+1);
+        annio=Integer.toString(calendario.get(Calendar.YEAR));
+        return dia+"/"+mes+"/"+annio;
     }
     
     public boolean comprobarVacioTablaEnProgreso(){
@@ -444,7 +510,9 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnIniciarReanudar;
     private javax.swing.JButton btnPausar;
+    private javax.swing.JButton btnRegresarPendientes;
     private javax.swing.JLabel fondo;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
