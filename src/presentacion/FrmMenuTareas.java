@@ -9,6 +9,8 @@ package presentacion;
 import DAOS.TareaDAO;
 import Objeto_negocio.Estado;
 import Objeto_negocio.Tarea;
+import java.awt.Color;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -35,6 +37,11 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private boolean mensaje;
     private int numDescansos;
     private Timer timer;
+    private boolean ignoreDrag = false;
+    public DefaultTableModel modeloTablaEnProgreso;
+    boolean elementoSeleccionado=false;
+    int indexEnProgeso;
+    DefaultTableModel modelo;
     
     public FrmMenuTareas() {
         initComponents();
@@ -144,7 +151,8 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         lblNumDescansos = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         lblTemporizador = new javax.swing.JLabel();
-        fondo = new javax.swing.JLabel();
+        btnArribaEnProgreso = new javax.swing.JButton();
+        btnAbajoEnProgreso = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -164,7 +172,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbPendiente);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 190, 300));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, 410, 560));
 
         tbEnProgreso.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -186,7 +194,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tbEnProgreso);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 70, 190, 270));
+        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 60, 360, 530));
 
         tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -198,7 +206,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tbTerminado);
 
-        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 190, 300));
+        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 60, 370, 550));
 
         btnIniciarReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnIniciarReanudar.setText("Iniciar");
@@ -207,7 +215,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnIniciarReanudarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 230, 130, 30));
+        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 310, 130, 30));
 
         Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         Salir.setText("Salir");
@@ -216,7 +224,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 SalirActionPerformed(evt);
             }
         });
-        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 350, 130, 30));
+        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 430, 130, 30));
 
         btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
@@ -225,7 +233,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 310, 130, 30));
+        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 390, 130, 30));
 
         btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnPausar.setText("Pausar");
@@ -234,7 +242,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnPausarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 270, 130, 30));
+        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 350, 130, 30));
 
         btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar tarea");
@@ -243,11 +251,11 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 120, 130, 30));
+        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 200, 130, 30));
 
         lblInformacionDescansos.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblInformacionDescansos.setText("Número de descansos");
-        getContentPane().add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 60, -1, -1));
+        getContentPane().add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 140, -1, -1));
 
         btnRegresarPendientes.setText("Regresar a tareas pendientes");
         btnRegresarPendientes.addActionListener(new java.awt.event.ActionListener() {
@@ -255,22 +263,35 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnRegresarPendientesActionPerformed(evt);
             }
         });
-        getContentPane().add(btnRegresarPendientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 350, -1, -1));
+        getContentPane().add(btnRegresarPendientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 600, -1, -1));
 
         lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNumDescansos.setText("0");
-        getContentPane().add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 70, 30, -1));
+        getContentPane().add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 160, 30, -1));
 
         jLabel1.setText("En caso de no terminar seleccione la tarea, no confirme y seleccione el boton");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 370, 440, 30));
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 630, 440, 30));
 
         lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         lblTemporizador.setText("00:00");
-        getContentPane().add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 160, -1, -1));
+        getContentPane().add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 240, -1, -1));
 
-        fondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/MenuTareas.png"))); // NOI18N
-        getContentPane().add(fondo, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        btnArribaEnProgreso.setText("Arriba");
+        btnArribaEnProgreso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnArribaEnProgresoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnArribaEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 200, 70, 40));
+
+        btnAbajoEnProgreso.setText("Abajo");
+        btnAbajoEnProgreso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbajoEnProgresoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(btnAbajoEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 380, 70, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -300,7 +321,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
            
             if(opcion==0){
                 int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
-                Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
+                Tarea tarea= this.tareasEnProgreso.get(this.econtrarElemento(indiceFelaSeleccionada));
                 tarea.setEstado(Estado.TERMINADA);
                 tareaDao.actualizarParaFinalizar(tarea);
                 this.cargarTareasEnProgreso();
@@ -312,8 +333,25 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tbEnProgresoMouseClicked
 
+    private int econtrarElemento(Integer indiceFila){
+        for (int i = 0; i < tareasEnProgreso.size(); i++) {
+            if(tareasEnProgreso.get(i).getNombre().equals(modeloTablaEnProgreso.getValueAt(indiceFila, 1))){
+                return i;
+            }
+        }
+        return 0;
+    }
     private void tbEnProgresoMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbEnProgresoMouseDragged
-        tbEnProgreso.setDragEnabled(true);
+//        tbEnProgreso.setDragEnabled(true);
+//        if (!ignoreDrag) {
+//            // We only call this method when a user has NOT clicked on a cell that is already selected 
+//            super.processMouseMotionEvent(evt);                        
+//        }else{
+//
+//            // Start a table row drag operation
+//            tbEnProgreso.getTransferHandler().exportAsDrag(tbEnProgreso, evt, DnDConstants.ACTION_COPY);
+//
+//        }
     }//GEN-LAST:event_tbEnProgresoMouseDragged
 
     private void btnIniciarReanudarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarReanudarActionPerformed
@@ -360,19 +398,56 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private void btnRegresarPendientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarPendientesActionPerformed
            try {
             int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
-             if(indiceFelaSeleccionada==-1){  
+          if(indiceFelaSeleccionada==-1){  
            JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee regresar", "error", JOptionPane.INFORMATION_MESSAGE);
-           }
-            Tarea tarea= this.tareasEnProgreso.get(indiceFelaSeleccionada);
+           }else{ 
+            Tarea tarea= this.tareasEnProgreso.get(this.econtrarElemento(indiceFelaSeleccionada));
             tarea.setEstado(Estado.PENDIENTE);
             tareaDao.actualizar(tarea);
             this.cargarTareasEnProgreso();
             this.cargarTareasPendientes();
             JOptionPane.showMessageDialog(null, "Tarea regresada con éxito", "Tarea terminada", JOptionPane.INFORMATION_MESSAGE);
-        } catch (Exception ex) {
+            } 
+       } catch (Exception ex) {
             Logger.getLogger(FrmMenuTareas.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnRegresarPendientesActionPerformed
+
+    private void btnArribaEnProgresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnArribaEnProgresoActionPerformed
+     int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
+     if(indiceFelaSeleccionada==-1){  
+     JOptionPane.showMessageDialog(this, "Selecciona la tarea que desee subir", "Seleccione tarea", JOptionPane.INFORMATION_MESSAGE);
+     }else{ 
+        if(elementoSeleccionado==false){
+            modelo=(DefaultTableModel)tbEnProgreso.getModel();
+            elementoSeleccionado=true;
+        }
+        indexEnProgeso=tbEnProgreso.getSelectedRow();
+        if(indexEnProgeso>0){
+            modelo.moveRow(indexEnProgeso, indexEnProgeso, indexEnProgeso - 1);
+            tbEnProgreso.setRowSelectionInterval(indexEnProgeso - 1, indexEnProgeso - 1);
+            tbEnProgreso.setSelectionBackground(Color.DARK_GRAY);
+        } 
+      }
+    }//GEN-LAST:event_btnArribaEnProgresoActionPerformed
+
+    private void btnAbajoEnProgresoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbajoEnProgresoActionPerformed
+     int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow(); 
+     if(indiceFelaSeleccionada==-1){  
+     JOptionPane.showMessageDialog(this, "Selecciona la tarea que desee bajar", "Seleccione tarea", JOptionPane.INFORMATION_MESSAGE);
+     }else{  
+        if(elementoSeleccionado==false){
+            modelo=(DefaultTableModel)tbEnProgreso.getModel();
+            elementoSeleccionado=true;
+        }
+        indexEnProgeso=tbEnProgreso.getSelectedRow();
+        if(indexEnProgeso<modelo.getRowCount() - 1){
+            modelo.moveRow(indexEnProgeso, indexEnProgeso, indexEnProgeso + 1);
+            tbEnProgreso.setRowSelectionInterval(indexEnProgeso + 1, indexEnProgeso + 1);
+            tbEnProgreso.setSelectionBackground(Color.DARK_GRAY);
+        }  
+      }
+    }//GEN-LAST:event_btnAbajoEnProgresoActionPerformed
 
     //para eliminar elementos si se requiere
     private void eliminarTareaFinalizada(){
@@ -413,13 +488,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private void cargarTareasEnProgreso(){
         try{
             this.tareasEnProgreso=this.tareaDao.consultarEstado(Estado.EN_PROGRESO);
-            DefaultTableModel modeloTabla=(DefaultTableModel)this.tbEnProgreso.getModel();
-            modeloTabla.setRowCount(0);
+            modeloTablaEnProgreso=(DefaultTableModel)this.tbEnProgreso.getModel();
+            modeloTablaEnProgreso.setRowCount(0);
             for (Tarea tarea : tareasEnProgreso) {
                 Object[] filaDatos=new Object[2];
                 filaDatos[0]=tarea.getNombre();
                 filaDatos[1]=tarea.getDescripcion();
-                modeloTabla.addRow(filaDatos);
+                modeloTablaEnProgreso.addRow(filaDatos);
             }
             if(!tareasEnProgreso.isEmpty()){
                 habilitarBotonIniciar();
@@ -506,12 +581,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Salir;
+    private javax.swing.JButton btnAbajoEnProgreso;
     private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnArribaEnProgreso;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnIniciarReanudar;
     private javax.swing.JButton btnPausar;
     private javax.swing.JButton btnRegresarPendientes;
-    private javax.swing.JLabel fondo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

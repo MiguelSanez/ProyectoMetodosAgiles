@@ -110,7 +110,7 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
 //        }
 //        return false;
 
-       for (int i = 0; i < listaTareas.size()-1; i++) {
+       for (int i = 0; i < listaTareas.size(); i++) {
             if(listaTareas.get(i).getNombre().equals(titulo)){
                 return true;
             }
@@ -137,7 +137,7 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
 //        }
 //        return false;
 
-        for (int i = 0; i < listaTareas.size()-1; i++) {
+        for (int i = 0; i < listaTareas.size(); i++) {
             if(listaTareas.get(i).getDescripcion().equals(descripcion)){
                 return true;
             }

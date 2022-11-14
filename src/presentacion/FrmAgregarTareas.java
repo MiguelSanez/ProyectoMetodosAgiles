@@ -126,14 +126,13 @@ public class FrmAgregarTareas extends javax.swing.JFrame {
             Tarea tarea=new Tarea(txtTitulo.getText().toLowerCase().trim(),txtDescripcion.getText().toLowerCase().trim(),Estado.PENDIENTE);
             TareaDAO tareaDao = new TareaDAO();
             tareaDao.llenarLista();
-            if(tareaDao.repetidoTitulo(txtTitulo.getText().toLowerCase())){
+            if(tareaDao.repetidoTitulo(txtTitulo.getText().toLowerCase().trim())){
                 JOptionPane.showMessageDialog(null, "Título repetido, por favor coloque otro");
-            }else if(tareaDao.repetidoDescripcion(txtDescripcion.getText().toLowerCase())){
-                JOptionPane.showMessageDialog(null, "Descripción repetida, porf avor coloque otra");
+            }else if(tareaDao.repetidoDescripcion(txtDescripcion.getText().toLowerCase().trim())){
+                JOptionPane.showMessageDialog(null, "Descripción repetida, por favor coloque otra");
             }else{
                 try {
                     tareaDao.insertar(tarea);
-                    System.out.println("aqui aun no se bloquea");
                     if(frmMenu.comprobarVacioTablaEnProgreso()==true) frmMenu.habilitarBotonIniciar();
                     frmMenu.cargarTareasPendientes();
                 } catch (Exception ex) {
