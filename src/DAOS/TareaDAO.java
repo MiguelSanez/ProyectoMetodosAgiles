@@ -317,12 +317,12 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
 
     @Override
     public ArrayList<Tarea> consultarPorIdLista(Integer id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null;
     }
 
     @Override
     public Tarea consultarPorId(Integer id) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null;
     }
 
     @Override

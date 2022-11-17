@@ -134,6 +134,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tbPendiente = new javax.swing.JTable();
@@ -153,9 +154,13 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         lblTemporizador = new javax.swing.JLabel();
         btnArribaEnProgreso = new javax.swing.JButton();
         btnAbajoEnProgreso = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
         tbPendiente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -172,7 +177,18 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbPendiente);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 60, 410, 560));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridheight = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 371;
+        gridBagConstraints.ipady = 503;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 39, 0, 0);
+        getContentPane().add(jScrollPane1, gridBagConstraints);
 
         tbEnProgreso.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -194,7 +210,19 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tbEnProgreso);
 
-        getContentPane().add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 60, 360, 530));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 371;
+        gridBagConstraints.ipady = 503;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 60, 0, 0);
+        getContentPane().add(jScrollPane2, gridBagConstraints);
 
         tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -206,7 +234,19 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         ));
         jScrollPane3.setViewportView(tbTerminado);
 
-        getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(960, 60, 370, 550));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridheight = 10;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.ipadx = 331;
+        gridBagConstraints.ipady = 503;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        getContentPane().add(jScrollPane3, gridBagConstraints);
 
         btnIniciarReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnIniciarReanudar.setText("Iniciar");
@@ -215,7 +255,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnIniciarReanudarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 310, 130, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 55;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(8, 10, 0, 0);
+        getContentPane().add(btnIniciarReanudar, gridBagConstraints);
 
         Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         Salir.setText("Salir");
@@ -224,7 +272,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 SalirActionPerformed(evt);
             }
         });
-        getContentPane().add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 430, 130, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 9;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 67;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        getContentPane().add(Salir, gridBagConstraints);
 
         btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
@@ -233,7 +289,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnCancelarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 390, 130, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 35;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        getContentPane().add(btnCancelar, gridBagConstraints);
 
         btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnPausar.setText("Pausar");
@@ -242,7 +306,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnPausarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 350, 130, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.ipadx = 49;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
+        getContentPane().add(btnPausar, gridBagConstraints);
 
         btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnAgregar.setText("Agregar tarea");
@@ -251,11 +323,26 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnAgregarActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 200, 130, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.ipadx = 1;
+        gridBagConstraints.ipady = 3;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(44, 10, 0, 0);
+        getContentPane().add(btnAgregar, gridBagConstraints);
 
         lblInformacionDescansos.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
         lblInformacionDescansos.setText("Número de descansos");
-        getContentPane().add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 140, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(90, 10, 0, 0);
+        getContentPane().add(lblInformacionDescansos, gridBagConstraints);
 
         btnRegresarPendientes.setText("Regresar a tareas pendientes");
         btnRegresarPendientes.addActionListener(new java.awt.event.ActionListener() {
@@ -263,19 +350,43 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnRegresarPendientesActionPerformed(evt);
             }
         });
-        getContentPane().add(btnRegresarPendientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 600, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 11;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 150, 0, 0);
+        getContentPane().add(btnRegresarPendientes, gridBagConstraints);
 
         lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
         lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblNumDescansos.setText("0");
-        getContentPane().add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1230, 160, 30, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 280, 0, 0);
+        getContentPane().add(lblNumDescansos, gridBagConstraints);
 
         jLabel1.setText("En caso de no terminar seleccione la tarea, no confirme y seleccione el boton");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 630, 440, 30));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 12;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.ipadx = 56;
+        gridBagConstraints.ipady = 16;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(7, 30, 0, 0);
+        getContentPane().add(jLabel1, gridBagConstraints);
 
         lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
         lblTemporizador.setText("00:00");
-        getContentPane().add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(1340, 240, -1, -1));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 6;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(lblTemporizador, gridBagConstraints);
 
         btnArribaEnProgreso.setText("Arriba");
         btnArribaEnProgreso.addActionListener(new java.awt.event.ActionListener() {
@@ -283,7 +394,15 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnArribaEnProgresoActionPerformed(evt);
             }
         });
-        getContentPane().add(btnArribaEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 200, 70, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridheight = 3;
+        gridBagConstraints.ipadx = 9;
+        gridBagConstraints.ipady = 17;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(44, 10, 0, 0);
+        getContentPane().add(btnArribaEnProgreso, gridBagConstraints);
 
         btnAbajoEnProgreso.setText("Abajo");
         btnAbajoEnProgreso.addActionListener(new java.awt.event.ActionListener() {
@@ -291,7 +410,57 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnAbajoEnProgresoActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAbajoEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(880, 380, 70, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.ipadx = 9;
+        gridBagConstraints.ipady = 17;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
+        getContentPane().add(btnAbajoEnProgreso, gridBagConstraints);
+
+        jPanel3.setBackground(new java.awt.Color(28, 86, 164));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 14;
+        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.ipadx = 1470;
+        gridBagConstraints.ipady = 20;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 3);
+        getContentPane().add(jPanel3, gridBagConstraints);
+
+        jPanel1.setBackground(new java.awt.Color(88, 116, 241));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logo.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 620, 10, 730);
+        jPanel1.add(jLabel2, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        getContentPane().add(jPanel1, gridBagConstraints);
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 10;
+        gridBagConstraints.gridheight = 13;
+        gridBagConstraints.ipadx = 1470;
+        gridBagConstraints.ipady = 690;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
+        getContentPane().add(jPanel2, gridBagConstraints);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -591,6 +760,10 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private javax.swing.JButton btnPausar;
     private javax.swing.JButton btnRegresarPendientes;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

@@ -27,7 +27,7 @@ public abstract class BaseDAO<T> {
      * @return conexion de la bd
     */
     public Connection conectar() {
-        String url = "jdbc:sqlite:src\\basededatos\\proyectopomodoro.db";
+        String url = "jdbc:sqlite:proyectopomodoro.db";
         try {
 
             System.out.println("Conectando a la base de datos");
