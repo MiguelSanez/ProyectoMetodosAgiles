@@ -334,8 +334,9 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     }//GEN-LAST:event_tbEnProgresoMouseClicked
 
     private int econtrarElemento(Integer indiceFila){
+        System.out.println("aqui entra 2do");
         for (int i = 0; i < tareasEnProgreso.size(); i++) {
-            if(tareasEnProgreso.get(i).getNombre().equals(modeloTablaEnProgreso.getValueAt(indiceFila, 1))){
+            if(tareasEnProgreso.get(i).getNombre().equals(modeloTablaEnProgreso.getValueAt(indiceFila, 0))){
                 return i;
             }
         }
@@ -401,6 +402,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
           if(indiceFelaSeleccionada==-1){  
            JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee regresar", "error", JOptionPane.INFORMATION_MESSAGE);
            }else{ 
+            System.out.println("aqui entra 1ero");
             Tarea tarea= this.tareasEnProgreso.get(this.econtrarElemento(indiceFelaSeleccionada));
             tarea.setEstado(Estado.PENDIENTE);
             tareaDao.actualizar(tarea);
