@@ -42,6 +42,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     boolean elementoSeleccionado=false;
     int indexEnProgeso;
     DefaultTableModel modelo;
+    public Tarea tareaModificacion;
     
     public FrmMenuTareas() {
         initComponents();
@@ -155,6 +156,8 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         btnArribaEnProgreso = new javax.swing.JButton();
         btnAbajoEnProgreso = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -420,6 +423,23 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         getContentPane().add(btnAbajoEnProgreso, gridBagConstraints);
 
         jPanel3.setBackground(new java.awt.Color(28, 86, 164));
+
+        btnModificar.setText("Modificar descripcion");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnModificar);
+
+        btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnEliminar);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 14;
@@ -620,6 +640,60 @@ public class FrmMenuTareas extends javax.swing.JFrame {
       }
     }//GEN-LAST:event_btnAbajoEnProgresoActionPerformed
 
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+       this.eliminarTotal();
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+      private void eliminarTotal(){
+        int indiceFelaSeleccionadaPendientes = this.tbPendiente.getSelectedRow();
+        int indiceFelaSeleccionadaEnProgreso = this.tbEnProgreso.getSelectedRow();
+         if(indiceFelaSeleccionadaEnProgreso==-1 && indiceFelaSeleccionadaPendientes==-1){  
+          JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee eliminar", "error", JOptionPane.INFORMATION_MESSAGE);
+         }else if(indiceFelaSeleccionadaPendientes>-1){
+             this.eliminarTareaPendientes();
+         }else if(indiceFelaSeleccionadaEnProgreso>-1){
+             this.eliminarTareaEnProgreso();
+         }
+    }
+    
+    private void eliminarTareaPendientes(){
+        int indiceFelaSeleccionada = this.tbPendiente.getSelectedRow();
+       if(indiceFelaSeleccionada==-1){  
+           JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee eliminar", "error", JOptionPane.INFORMATION_MESSAGE);
+       }else{ 
+        int OpcionSeleccionada=JOptionPane.showConfirmDialog(this, "Desea eliminar el elemento seleccionado","Confirmacion",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(OpcionSeleccionada==JOptionPane.YES_OPTION){
+            Integer id=tareasPendientes.get(indiceFelaSeleccionada).getId();
+           try{
+              this.tareaDao.eliminar(id);
+           }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudo lograr la eliminacion de la tarea seleccionada", "Error", JOptionPane.ERROR_MESSAGE); 
+           }
+           this.cargarTareasPendientes();
+           JOptionPane.showMessageDialog(this, "Se elimino la tarea", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE); 
+        }
+       }
+    }
+    
+    private void eliminarTareaEnProgreso(){
+        int indiceFelaSeleccionada = this.tbEnProgreso.getSelectedRow();
+       if(indiceFelaSeleccionada==-1){  
+           JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee eliminar", "error", JOptionPane.INFORMATION_MESSAGE);
+       }else{ 
+        int OpcionSeleccionada=JOptionPane.showConfirmDialog(this, "Desea eliminar el elemento seleccionado","Confirmacion",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(OpcionSeleccionada==JOptionPane.YES_OPTION){
+            Integer id = this.tareasEnProgreso.get(this.econtrarElemento(indiceFelaSeleccionada)).getId();
+            try{
+              this.tareaDao.eliminar(id);
+           }catch(Exception ex){
+              JOptionPane.showMessageDialog(this, "no se pudo lograr la eliminacion de la tarea seleccionada", "Error", JOptionPane.ERROR_MESSAGE); 
+           }
+            this.cargarTareasEnProgreso();
+           JOptionPane.showMessageDialog(this, "Se elimino la tarea", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE);
+        }
+       }
+    }
+    
     //para eliminar elementos si se requiere
     private void eliminarTareaFinalizada(){
        int indiceFelaSeleccionada = this.tbTerminado.getSelectedRow();
@@ -628,18 +702,40 @@ public class FrmMenuTareas extends javax.swing.JFrame {
        }else{  
           int OpcionSeleccionada=JOptionPane.showConfirmDialog(this, "Desea eliminar el elemento seleccionado","Confirmacion",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if(OpcionSeleccionada==JOptionPane.YES_OPTION){
-           Integer idCliente=tareasTerminadas.get(indiceFelaSeleccionada).getId();
+           Integer id=tareasTerminadas.get(indiceFelaSeleccionada).getId();
            try{
-              this.tareaDao.eliminar(idCliente);
+              this.tareaDao.eliminar(id);
            }catch(Exception ex){
-              JOptionPane.showMessageDialog(this, "no se pudo lograr la actualizacion de la tarea seleccionado", "Error", JOptionPane.ERROR_MESSAGE); 
+              JOptionPane.showMessageDialog(this, "no se pudo lograr la eliminacion de la tarea seleccionada", "Error", JOptionPane.ERROR_MESSAGE); 
            }
            this.cargarTareasTerminadas();
            JOptionPane.showMessageDialog(this, "Se elimino la tarea", "Operacion realizada", JOptionPane.INFORMATION_MESSAGE); 
         }
       }  
+    }  
+      
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        this.modificarTareas();
+    }//GEN-LAST:event_btnModificarActionPerformed
+
+    public void modificarTareas(){
+      int indiceFelaSeleccionadaPendientes = this.tbPendiente.getSelectedRow();
+        int indiceFelaSeleccionadaEnProgreso = this.tbEnProgreso.getSelectedRow();
+         if(indiceFelaSeleccionadaEnProgreso==-1 && indiceFelaSeleccionadaPendientes==-1){  
+          JOptionPane.showMessageDialog(this, "Selecciona la tarea que se desee modificar", "error", JOptionPane.INFORMATION_MESSAGE);
+         }else if(indiceFelaSeleccionadaPendientes>-1){
+             Tarea tareaMod = this.tareasPendientes.get(indiceFelaSeleccionadaPendientes);
+             FrmModificarTareas modificar=new FrmModificarTareas(tareaMod);
+             modificar.jFrameMenu(this);
+             modificar.setVisible(true);
+         }else if(indiceFelaSeleccionadaEnProgreso>-1){
+             Tarea tareaMod = this.tareasEnProgreso.get(this.econtrarElemento(indiceFelaSeleccionadaEnProgreso));
+             FrmModificarTareas modificar=new FrmModificarTareas(tareaMod);
+             modificar.jFrameMenu(this);
+             modificar.setVisible(true);
+         } 
     }
-    
+        
     public void cargarTareasPendientes(){
         try{
             this.tareasPendientes=this.tareaDao.consultarEstado(Estado.PENDIENTE);
@@ -656,7 +752,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         }
     }
     
-    private void cargarTareasEnProgreso(){
+    public void cargarTareasEnProgreso(){
         try{
             this.tareasEnProgreso=this.tareaDao.consultarEstado(Estado.EN_PROGRESO);
             modeloTablaEnProgreso=(DefaultTableModel)this.tbEnProgreso.getModel();
@@ -756,7 +852,9 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnArribaEnProgreso;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEliminar;
     private javax.swing.JButton btnIniciarReanudar;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnPausar;
     private javax.swing.JButton btnRegresarPendientes;
     private javax.swing.JLabel jLabel1;

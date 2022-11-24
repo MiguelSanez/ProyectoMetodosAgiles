@@ -24,6 +24,7 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
     private Tarea tarea;
     public boolean señal;
     public ArrayList<Tarea> listaTareas=new ArrayList<>();
+    public ArrayList<Tarea> listaTareasEditadas=new ArrayList<>();
     
     @Override
     public void actualizar(Tarea entidad) throws Exception {
@@ -36,6 +37,25 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
             ps.setString(2, entidad.getDescripcion());
             ps.setInt(3, entidad.getEstado().ordinal());
             ps.setInt(4,entidad.getId());
+
+            ps.executeUpdate();
+            ps.close();
+            System.out.println("Proceso ejecutado con exito");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+    
+     public void actualizarParaFrmModificacion(Tarea entidad) throws Exception {
+        String sql = "UPDATE tareas SET nombre=?, descripcion=? WHERE id=?";
+         PreparedStatement ps;
+         try {
+            Connection conexion = conectar();
+            ps = conexion.prepareStatement(sql);
+            ps.setString(1, entidad.getNombre());
+            ps.setString(2, entidad.getDescripcion());
+            ps.setInt(3,entidad.getId());
 
             ps.executeUpdate();
             ps.close();
@@ -145,6 +165,34 @@ public class TareaDAO extends BaseDAO<Tarea> implements Comparator<Tarea>{
         señal=false;
         return false;
     } 
+    public void modificacionListas(String titulo,String descripcion){
+        listaTareasEditadas=listaTareas;
+        for (int i = 0; i < listaTareas.size(); i++) {
+            if(listaTareas.get(i).getNombre().equals(titulo)||listaTareas.get(i).getDescripcion().equals(descripcion)){
+                listaTareasEditadas.remove(i);
+            }
+        }
+    }
+    
+     public boolean repetidoTituloModificacion(String titulo){
+        for (int i = 0; i < listaTareasEditadas.size(); i++) {
+            if(listaTareasEditadas.get(i).getNombre().equals(titulo)){
+                return true;
+            }
+        }
+        señal=false;
+        return false;
+    }
+     
+    public boolean repetidoDescripcionModificacion(String descripcion){
+        for (int i = 0; i < listaTareasEditadas.size(); i++) {
+            if(listaTareasEditadas.get(i).getNombre().equals(descripcion)){
+                return true;
+            }
+        }
+        señal=false;
+        return false;
+    }
 
     @Override
     public ArrayList<Tarea> consultar() throws Exception {
