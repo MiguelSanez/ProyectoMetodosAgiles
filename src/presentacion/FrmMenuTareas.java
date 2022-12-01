@@ -1,14 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package presentacion;
 
 import DAOS.TareaDAO;
 import Objeto_negocio.Estado;
 import Objeto_negocio.Tarea;
+import DAOS.SClip;
 import java.awt.Color;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
@@ -43,6 +40,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     int indexEnProgeso;
     DefaultTableModel modelo;
     public Tarea tareaModificacion;
+    private SClip sonido;
     
     public FrmMenuTareas() {
         initComponents();
@@ -54,6 +52,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         this.descanso=false;
         this.mensaje=false;
         this.numDescansos=0;
+        this.sonido = new SClip("sonido/notificacion.wav");
         this.cargarTareasPendientes();
         this.cargarTareasEnProgreso();
         this.cargarTareasTerminadas();
@@ -70,51 +69,56 @@ public class FrmMenuTareas extends javax.swing.JFrame {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            if(segundos != 0 || minutos != 0) {
-                if(segundos==1 && minutos==0 && !descanso){
-                    if(auxOpcion==0){
-                        descanso=true;
-                    } else if(auxOpcion==1){
+            if(!sonido.isPlaying()){
+                if(segundos != 0 || minutos != 0) {
+                    if(segundos==1 && minutos==0 && !descanso){
+                        if(auxOpcion==0){
+                            descanso=true;
+                        } else if(auxOpcion==1){
+                            numDescansos++;
+                            System.out.println(numDescansos);
+                            if(numDescansos==4) numDescansos=0;
+                        }
+                        segundos--;
+                        sonido.loop();
+                    } else if(segundos==1 && minutos==0 && descanso){
                         numDescansos++;
                         System.out.println(numDescansos);
                         if(numDescansos==4) numDescansos=0;
+                        descanso=false;
+                        segundos--;
+                        sonido.loop();
+                    } else if(segundos!=0){
+                        segundos--;
+
+                    } else if(minutos!=0){
+                        minutos--;
+                        segundos=59;
                     }
-                    segundos--;
-                } else if(segundos==1 && minutos==0 && descanso){
-                    numDescansos++;
-                    System.out.println(numDescansos);
-                    if(numDescansos==4) numDescansos=0;
-                    descanso=false;
-                    segundos--;
-                } else if(segundos!=0){
-                    segundos--;
-                    
-                } else if(minutos!=0){
-                    minutos--;
-                    segundos=59;
-                }
-                actualizarTemporizador();
-                if(segundos==5 && minutos==0){
-                    if(descanso){
-                        JOptionPane.showMessageDialog(null, "El tiempo de descanso está por terminar", "Tiempo de descanso finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
-                    }else{
-                        opciones= JOptionPane.showOptionDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones2,botones2[0]);
-                        if(opciones==1){
-                            opciones2= JOptionPane.showOptionDialog(null, "¿Deseas omitir?", "Confirmación omición", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
-                            if(opciones2==0){
-                                auxOpcion=1;
-                            }else{
-                                auxOpcion=0;
-                            }
+                    actualizarTemporizador();
+                    if(segundos==5 && minutos==0){
+                        if(descanso){
+                            JOptionPane.showMessageDialog(null, "El tiempo de descanso está por terminar", "Tiempo de descanso finaliza pronto", JOptionPane.INFORMATION_MESSAGE);
                         }else{
-                            auxOpcion= opciones;
+                            opciones= JOptionPane.showOptionDialog(null, "El tiempo de actividades está por terminar", "Tiempo de actividades finaliza pronto", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones2,botones2[0]);
+                            if(opciones==1){
+                                opciones2= JOptionPane.showOptionDialog(null, "¿Deseas omitir?", "Confirmación omición", JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.INFORMATION_MESSAGE,null,botones,botones[0]);
+                                if(opciones2==0){
+                                    auxOpcion=1;
+                                }else{
+                                    auxOpcion=0;
+                                }
+                            }else{
+                                auxOpcion= opciones;
+                            }
                         }
+                        mensaje= true;
                     }
-                    mensaje= true;
                 }
-            }
-            else if(mensaje){
-                establecerTiempo();
+                else if(mensaje){
+
+                    establecerTiempo();
+                }
             }
         }
         
@@ -137,61 +141,124 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbPendiente = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tbEnProgreso = new javax.swing.JTable();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        tbTerminado = new javax.swing.JTable();
-        btnIniciarReanudar = new javax.swing.JButton();
-        Salir = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
-        btnPausar = new javax.swing.JButton();
-        btnAgregar = new javax.swing.JButton();
-        lblInformacionDescansos = new javax.swing.JLabel();
-        btnRegresarPendientes = new javax.swing.JButton();
-        lblNumDescansos = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        lblTemporizador = new javax.swing.JLabel();
-        btnArribaEnProgreso = new javax.swing.JButton();
-        btnAbajoEnProgreso = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        btnModificar = new javax.swing.JButton();
-        btnEliminar = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
+        lblTemporizador = new javax.swing.JLabel();
+        btnIniciarReanudar = new javax.swing.JButton();
+        lblNumDescansos = new javax.swing.JLabel();
+        lblInformacionDescansos = new javax.swing.JLabel();
+        btnAgregar = new javax.swing.JButton();
+        btnPausar = new javax.swing.JButton();
+        btnCancelar = new javax.swing.JButton();
+        Salir = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tbTerminado = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbEnProgreso = new javax.swing.JTable();
+        btnArribaEnProgreso = new javax.swing.JButton();
+        btnAbajoEnProgreso = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbPendiente = new javax.swing.JTable();
+        btnRegresarPendientes = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        btnModificar = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnSonido = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(new java.awt.GridBagLayout());
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        tbPendiente.setModel(new javax.swing.table.DefaultTableModel(
+        jPanel3.setBackground(new java.awt.Color(28, 86, 164));
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 590, 1140, 53));
+
+        jPanel1.setBackground(new java.awt.Color(88, 116, 241));
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logo.png"))); // NOI18N
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 10;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 620, 10, 730);
+        jPanel1.add(jLabel2, gridBagConstraints);
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1140, -1));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
+        lblTemporizador.setText("00:00");
+        jPanel2.add(lblTemporizador, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 170, -1, -1));
+
+        btnIniciarReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnIniciarReanudar.setText("Iniciar");
+        btnIniciarReanudar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnIniciarReanudarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnIniciarReanudar, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 240, 130, 30));
+
+        lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
+        lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblNumDescansos.setText("0");
+        jPanel2.add(lblNumDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 80, 30, -1));
+
+        lblInformacionDescansos.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        lblInformacionDescansos.setText("Número de descansos");
+        jPanel2.add(lblInformacionDescansos, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 50, 130, -1));
+
+        btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnAgregar.setText("Agregar tarea");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnAgregar, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 140, 130, 30));
+
+        btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnPausar.setText("Pausar");
+        btnPausar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPausarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnPausar, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 280, 130, 30));
+
+        btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnCancelar.setText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnCancelar, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 320, 130, 30));
+
+        Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+        jPanel2.add(Salir, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 410, 130, 30));
+
+        tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Nombre", "Descripción"
+                "Nombre", "Descripción", "Fecha", "Hora"
             }
         ));
-        tbPendiente.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tbPendienteMouseClicked(evt);
-            }
-        });
-        jScrollPane1.setViewportView(tbPendiente);
+        jScrollPane3.setViewportView(tbTerminado);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridheight = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 371;
-        gridBagConstraints.ipady = 503;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 39, 0, 0);
-        getContentPane().add(jScrollPane1, gridBagConstraints);
+        jPanel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 20, 340, 430));
 
         tbEnProgreso.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -213,183 +280,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(tbEnProgreso);
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 371;
-        gridBagConstraints.ipady = 503;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 60, 0, 0);
-        getContentPane().add(jScrollPane2, gridBagConstraints);
-
-        tbTerminado.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Nombre", "Descripción", "Fecha", "Hora"
-            }
-        ));
-        jScrollPane3.setViewportView(tbTerminado);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.gridheight = 10;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.ipadx = 331;
-        gridBagConstraints.ipady = 503;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-        getContentPane().add(jScrollPane3, gridBagConstraints);
-
-        btnIniciarReanudar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnIniciarReanudar.setText("Iniciar");
-        btnIniciarReanudar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIniciarReanudarActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 55;
-        gridBagConstraints.ipady = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(8, 10, 0, 0);
-        getContentPane().add(btnIniciarReanudar, gridBagConstraints);
-
-        Salir.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        Salir.setText("Salir");
-        Salir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SalirActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 9;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 67;
-        gridBagConstraints.ipady = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-        getContentPane().add(Salir, gridBagConstraints);
-
-        btnCancelar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 35;
-        gridBagConstraints.ipady = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-        getContentPane().add(btnCancelar, gridBagConstraints);
-
-        btnPausar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnPausar.setText("Pausar");
-        btnPausar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPausarActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.ipadx = 49;
-        gridBagConstraints.ipady = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 10, 0, 0);
-        getContentPane().add(btnPausar, gridBagConstraints);
-
-        btnAgregar.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        btnAgregar.setText("Agregar tarea");
-        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAgregarActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridwidth = 3;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.ipadx = 1;
-        gridBagConstraints.ipady = 3;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(44, 10, 0, 0);
-        getContentPane().add(btnAgregar, gridBagConstraints);
-
-        lblInformacionDescansos.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        lblInformacionDescansos.setText("Número de descansos");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(90, 10, 0, 0);
-        getContentPane().add(lblInformacionDescansos, gridBagConstraints);
-
-        btnRegresarPendientes.setText("Regresar a tareas pendientes");
-        btnRegresarPendientes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegresarPendientesActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 11;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 150, 0, 0);
-        getContentPane().add(btnRegresarPendientes, gridBagConstraints);
-
-        lblNumDescansos.setFont(new java.awt.Font("SansSerif", 1, 36)); // NOI18N
-        lblNumDescansos.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblNumDescansos.setText("0");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.ipadx = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(4, 280, 0, 0);
-        getContentPane().add(lblNumDescansos, gridBagConstraints);
-
-        jLabel1.setText("En caso de no terminar seleccione la tarea, no confirme y seleccione el boton");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 12;
-        gridBagConstraints.gridwidth = 2;
-        gridBagConstraints.ipadx = 56;
-        gridBagConstraints.ipady = 16;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(7, 30, 0, 0);
-        getContentPane().add(jLabel1, gridBagConstraints);
-
-        lblTemporizador.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
-        lblTemporizador.setText("00:00");
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 6;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        getContentPane().add(lblTemporizador, gridBagConstraints);
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 20, 260, 430));
 
         btnArribaEnProgreso.setText("Arriba");
         btnArribaEnProgreso.addActionListener(new java.awt.event.ActionListener() {
@@ -397,15 +288,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnArribaEnProgresoActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.gridheight = 3;
-        gridBagConstraints.ipadx = 9;
-        gridBagConstraints.ipady = 17;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(44, 10, 0, 0);
-        getContentPane().add(btnArribaEnProgreso, gridBagConstraints);
+        jPanel2.add(btnArribaEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 200, 70, 40));
 
         btnAbajoEnProgreso.setText("Abajo");
         btnAbajoEnProgreso.addActionListener(new java.awt.event.ActionListener() {
@@ -413,16 +296,35 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnAbajoEnProgresoActionPerformed(evt);
             }
         });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.ipadx = 9;
-        gridBagConstraints.ipady = 17;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 10, 0, 0);
-        getContentPane().add(btnAbajoEnProgreso, gridBagConstraints);
+        jPanel2.add(btnAbajoEnProgreso, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 320, 70, 40));
 
-        jPanel3.setBackground(new java.awt.Color(28, 86, 164));
+        tbPendiente.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nombre", "Descripción"
+            }
+        ));
+        tbPendiente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbPendienteMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbPendiente);
+
+        jPanel2.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, 250, 430));
+
+        btnRegresarPendientes.setText("Regresar a tareas pendientes");
+        btnRegresarPendientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegresarPendientesActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnRegresarPendientes, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 470, -1, -1));
+
+        jLabel1.setText("En caso de no terminar seleccione la tarea, no confirme y seleccione el boton");
+        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 500, 424, 30));
 
         btnModificar.setText("Modificar descripcion");
         btnModificar.addActionListener(new java.awt.event.ActionListener() {
@@ -430,7 +332,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnModificarActionPerformed(evt);
             }
         });
-        jPanel3.add(btnModificar);
+        jPanel2.add(btnModificar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 470, -1, -1));
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -438,49 +340,18 @@ public class FrmMenuTareas extends javax.swing.JFrame {
                 btnEliminarActionPerformed(evt);
             }
         });
-        jPanel3.add(btnEliminar);
+        jPanel2.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 470, -1, -1));
 
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 14;
-        gridBagConstraints.gridwidth = 10;
-        gridBagConstraints.ipadx = 1470;
-        gridBagConstraints.ipady = 20;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 3, 3);
-        getContentPane().add(jPanel3, gridBagConstraints);
+        btnSonido.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnSonido.setText("Pausar sonido");
+        btnSonido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSonidoActionPerformed(evt);
+            }
+        });
+        jPanel2.add(btnSonido, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 10, -1, 30));
 
-        jPanel1.setBackground(new java.awt.Color(88, 116, 241));
-        jPanel1.setLayout(new java.awt.GridBagLayout());
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/logo.png"))); // NOI18N
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.ipadx = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(10, 620, 10, 730);
-        jPanel1.add(jLabel2, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridwidth = 10;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
-        getContentPane().add(jPanel1, gridBagConstraints);
-
-        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.gridwidth = 10;
-        gridBagConstraints.gridheight = 13;
-        gridBagConstraints.ipadx = 1470;
-        gridBagConstraints.ipady = 690;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 3);
-        getContentPane().add(jPanel2, gridBagConstraints);
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 1140, 540));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -718,6 +589,12 @@ public class FrmMenuTareas extends javax.swing.JFrame {
         this.modificarTareas();
     }//GEN-LAST:event_btnModificarActionPerformed
 
+    private void btnSonidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSonidoActionPerformed
+        if(sonido.isPlaying()){
+            sonido.stop();
+        }
+    }//GEN-LAST:event_btnSonidoActionPerformed
+
     public void modificarTareas(){
       int indiceFelaSeleccionadaPendientes = this.tbPendiente.getSelectedRow();
         int indiceFelaSeleccionadaEnProgreso = this.tbEnProgreso.getSelectedRow();
@@ -857,6 +734,7 @@ public class FrmMenuTareas extends javax.swing.JFrame {
     private javax.swing.JButton btnModificar;
     private javax.swing.JButton btnPausar;
     private javax.swing.JButton btnRegresarPendientes;
+    private javax.swing.JButton btnSonido;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
